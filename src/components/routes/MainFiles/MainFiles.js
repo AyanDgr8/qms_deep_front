@@ -9,6 +9,9 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
     const [error, setError] = useState(null);
     const [openFileId, setOpenFileId] = useState(null);
     const [termCounts, setTermCounts] = useState({});
+    const [playingFileId, setPlayingFileId] = useState(null); 
+    const [isAudioLoading, setIsAudioLoading] = useState(false);
+    const audioRefs = useRef({}); 
     const containerRef = useRef(null);
     const hasFetched = useRef(false);
 
@@ -40,6 +43,7 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
                     ? `http://localhost:8000/api/search-transcriptions/?${queryString}`
                     : `http://localhost:8000/api/transcriptions/`;
 
+                console.log("Fetching data...");
                 const response = await fetch(url);
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -63,8 +67,7 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
 
                         // Update term counts
                         const counts = {};
-                        [item.agent_transcription, item.agent_translation, 
-                         item.customer_transcription, item.customer_translation].forEach(field => {
+                        [item.transcription, item.translation ].forEach(field => {
                             if (field) {
                                 const matches = field.match(regex);
                                 if (matches) {
@@ -97,12 +100,11 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
 
                         return {
                             ...item,
-                            agent_transcription: highlightText(item.agent_transcription || ''),
-                            agent_translation: highlightText(item.agent_translation || ''),
-                            customer_transcription: highlightText(item.customer_transcription || ''),
-                            customer_translation: highlightText(item.customer_translation || '')
+                            transcription: highlightText(item.transcription || ''),
+                            translation: highlightText(item.translation || '')
                         };
                     });
+                    console.log("Processing data...");
 
                 setTermCounts(termCountsMap);
                 setData(filteredData);
@@ -131,6 +133,29 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
         }
     };
 
+    const handleAudioPlay = (fileId) => {
+        const audioElement = audioRefs.current[fileId];
+    
+        if (audioElement) {
+            if (playingFileId !== fileId) {
+                // Pause the currently playing audio
+                if (playingFileId && audioRefs.current[playingFileId]) {
+                    audioRefs.current[playingFileId].pause();
+                }
+                // Play the selected audio
+                setPlayingFileId(fileId);
+                audioElement.play();
+            } else {
+                // Pause the audio if the same file is clicked again
+                audioElement.pause();
+                setPlayingFileId(null);
+            }
+        } else {
+            console.error(`Audio element for fileId ${fileId} is not available.`);
+        }
+    };
+    
+
     const filterData = (data, searchTerms, additionalTerms, wordGroups) => {
         if (!searchTerms && !additionalTerms && !wordGroups) return data;
 
@@ -145,8 +170,7 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
         const regex = new RegExp(`(${escapedTerms})`, 'gi');
 
         return data.filter(item =>
-            [item.agent_transcription, item.agent_translation, 
-                item.customer_transcription, item.customer_translation].some(field =>
+            [item.transcription, item.translation].some(field =>
                 field && field.match(regex)
             )
         );
@@ -184,7 +208,7 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
                             <tbody>
                                 <tr>
                                     <th>File Name</th>
-                                    <td>{item.caller_id}</td>
+                                    <td>{item.file_name}</td>
                                     <td>
                                         <button
                                             className="toggle-button"
@@ -201,37 +225,45 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
                                             <td>{item.created_at}</td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Agent Transcription</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.agent_transcription }}></td>
+                                            <th>Transcription</th>
+                                            <td dangerouslySetInnerHTML={{ __html: item.transcription }}></td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Agent Translation</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.agent_translation }}></td>
-                                        </tr>
-
-                                        <tr className="details">
-                                            <th>Customer Transcription</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.customer_transcription }}></td>
+                                            <th>Translation</th>
+                                            <td dangerouslySetInnerHTML={{ __html: item.translation }}></td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Customer Translation</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.customer_translation }}></td>
+                                            <th>Sentiment Score</th>
+                                            <td>{item.sentiment_score}</td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Agent Sentiment</th>
-                                            <td>{item.agent_sentiment_score}</td>
+                                            <th>Abusive Count</th>
+                                            <td>{item.abusive_count}</td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Customer Sentiment</th>
-                                            <td>{item.customer_sentiment_score}</td>
+                                            <th>Contains Financial Info</th>
+                                            <td>{item.contains_financial_info}</td>
                                         </tr>
-
                                         <tr className="details">
-                                            <th>Download</th>
+                                            <th>Call Score</th>
+                                            <td>{item.call_score}</td>
+                                        </tr>
+                                        <tr className="details">
+                                            <th>Comment</th>
+                                            <td>{item.comment}</td>
+                                        </tr>
+                                        <tr className="details">
+                                            <th>Audio</th>
                                             <td>
-                                                <a href={item.audio_file_link} download>
-                                                    Download
-                                                </a>
+                                                <button className="audio-btn" onClick={() => handleAudioPlay(item.id)}>
+                                                    {playingFileId === item.id ? 'Pause' : 'Listen'}
+                                                </button>
+                                                {isAudioLoading && <span>Loading...</span>}
+                                                <audio
+                                                    ref={el => (audioRefs.current[item.id] = el)}
+                                                    // Dynamically generate the audio file link using the transcription_id
+                                                    src={`http://localhost:8000/mdeia/${item.file}`}
+                                                />
                                             </td>
                                         </tr>
                                     </>
@@ -247,7 +279,7 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
                             <tbody>
                                 <tr>
                                     <th>File Name</th>
-                                    <td>{item.caller_id}</td>
+                                    <td>{item.file_name}</td>
                                     <td>
                                         <button
                                             className="toggle-button"
@@ -263,39 +295,45 @@ const MainFiles = ({ searchQuery, wordGroups }) => {
                                             <th>Date Time</th>
                                             <td>{item.created_at}</td>
                                         </tr>
-                                        
                                         <tr className="details">
-                                            <th>Agent Transcription</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.agent_transcription }}></td>
+                                            <th>Transcription</th>
+                                            <td dangerouslySetInnerHTML={{ __html: item.transcription }}></td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Agent Translation</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.agent_translation }}></td>
-                                        </tr>
-
-                                        <tr className="details">
-                                            <th>Customer Transcription</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.customer_transcription }}></td>
+                                            <th>Translation</th>
+                                            <td dangerouslySetInnerHTML={{ __html: item.translation }}></td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Customer Translation</th>
-                                            <td dangerouslySetInnerHTML={{ __html: item.customer_translation }}></td>
+                                            <th>Sentiment Score</th>
+                                            <td>{item.sentiment_score}</td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Agent Sentiment</th>
-                                            <td>{item.agent_sentiment_score}</td>
+                                            <th>Abusive Count</th>
+                                            <td>{item.abusive_count}</td>
                                         </tr>
                                         <tr className="details">
-                                            <th>Customer Sentiment</th>
-                                            <td>{item.customer_sentiment_score}</td>
+                                            <th>Contains Financial Info</th>
+                                            <td>{item.contains_financial_info}</td>
                                         </tr>
-
                                         <tr className="details">
-                                            <th>Download</th>
+                                            <th>Call Score</th>
+                                            <td>{item.call_score}</td>
+                                        </tr>
+                                        <tr className="details">
+                                            <th>Comment</th>
+                                            <td>{item.comment}</td>
+                                        </tr>
+                                        <tr className="details">
+                                            <th>Audio</th>
                                             <td>
-                                                <a href={item.audio_file_link} download>
-                                                    Download
-                                                </a>
+                                                <button className="audio-btn" onClick={() => handleAudioPlay(item.id)}>
+                                                    {playingFileId === item.id ? 'Pause' : 'Listen'}
+                                                </button>
+                                                <audio
+                                                    ref={el => (audioRefs.current[item.id] = el)}
+                                                    // Dynamically generate the audio file link using the transcription_id
+                                                    src={`http://localhost:8000/media/${item.file}`}
+                                                />
                                             </td>
                                         </tr>
                                     </>

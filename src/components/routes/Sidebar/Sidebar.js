@@ -94,13 +94,13 @@ const Sidebar = ({ onWordGroupsChange }) => {
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
             />
-            <img
+            {/* <img
               src="/uploads/cali.png"
               className="cali"
               alt="cali"
               onClick={() => toggleCalendar("start")}
             />
-            {showCalendar.start && <Calendar />}
+            {showCalendar.start && <Calendar />} */}
           </div>
 
           {/* End Date Input */}
@@ -114,13 +114,13 @@ const Sidebar = ({ onWordGroupsChange }) => {
               aria-label="Sizing example input"
               aria-describedby="inputGroup-sizing-sm"
             />
-            <img
+            {/* <img
               src="/uploads/cali.png"
               className="cali"
               alt="cali"
               onClick={() => toggleCalendar("end")}
             />
-            {showCalendar.end && <Calendar />}
+            {showCalendar.end && <Calendar />} */}
           </div>
 
           {/* Word Groups Section */}

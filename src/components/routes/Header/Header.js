@@ -44,7 +44,7 @@ const Header = ({ onFilterChange }) => {
                                         href="#" 
                                         onClick={() => handleDropdownSelect("ReportData")}
                                     >
-                                        Report Data
+                                        Smart Spotting
                                     </a>
                                 </li>
                                 <li>
@@ -53,7 +53,7 @@ const Header = ({ onFilterChange }) => {
                                         href="#" 
                                         onClick={() => handleDropdownSelect("Normal")}
                                     >
-                                        Normal
+                                        Meta Data 
                                     </a>
                                 </li>
                                 <li>

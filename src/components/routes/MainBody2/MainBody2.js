@@ -4,12 +4,36 @@ import React, { useState } from "react";
 import "./MainBody2.css";
 
 const MainBody2 = () => {
-    const [spokenPhrase, setSpokenPhrase] = useState("");
-    const [addPhrase, setAddPhrase] = useState("");
+    const [callId, setCallId] = useState("");
+    const [callerIdNumber, setCallerIdNumber] = useState("");
+    const [extension, setExtension] = useState("");
+    const [direction, setDirection] = useState("Inbound");
+    const [externalNumber, setExternalNumber] = useState("");
+    const [callerIdName, setCallerIdName] = useState("");
+    const [callDuration, setCallDuration] = useState("");
 
     const handleClearClick = () => {
-        setSpokenPhrase("");
-        setAddPhrase("");
+        setCallId("");
+        setCallerIdNumber("");
+        setExtension("");
+        setDirection("Inbound");
+        setExternalNumber("");
+        setCallerIdName("");
+        setCallDuration("");
+    };
+
+    const handleSearchClick = () => {
+        // Implement search functionality here based on state values
+        console.log("Search initiated with the following values:");
+        console.log({
+            callId,
+            callerIdNumber,
+            extension,
+            direction,
+            externalNumber,
+            callerIdName,
+            callDuration,
+        });
     };
 
     return (
@@ -19,124 +43,100 @@ const MainBody2 = () => {
                     <div className="mainb-firstt">
                         <div className="mainb-first-search">
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Agent Name
-                                </span>
+                                <span className="input-group-text phrase-word span-w">Call ID</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Agent Name"
-                                    value={spokenPhrase}
-                                    onChange={(e) => setSpokenPhrase(e.target.value)}
+                                    placeholder="Enter Call ID"
+                                    value={callId}
+                                    onChange={(e) => setCallId(e.target.value)}
                                 />
                             </div>
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Disposition
-                                </span>
+                                <span className="input-group-text phrase-word span-w">Caller ID Number</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Disposition"
-                                    value={addPhrase}
-                                    onChange={(e) => setAddPhrase(e.target.value)}
+                                    placeholder="Enter Caller ID Number"
+                                    value={callerIdNumber}
+                                    onChange={(e) => setCallerIdNumber(e.target.value)}
                                 />
                             </div>
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Sentimental Score
-                                </span>
+                                <span className="input-group-text phrase-word span-w">Extension</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Sentimental Score"
-                                    value={spokenPhrase}
-                                    onChange={(e) => setSpokenPhrase(e.target.value)}
+                                    placeholder="Enter Extension"
+                                    value={extension}
+                                    onChange={(e) => setExtension(e.target.value)}
                                 />
                             </div>
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Abusive Score
-                                </span>
-                                <input
-                                    type="text"
-                                    className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Abusive Score"
-                                    value={addPhrase}
-                                    onChange={(e) => setAddPhrase(e.target.value)}
-                                />
+                                <span className="input-group-text phrase-word span-w">Direction</span>
+                                <select
+                                    className="form-select inp-w"
+                                    value={direction}
+                                    onChange={(e) => setDirection(e.target.value)}
+                                >
+                                    <option value="Inbound">Inbound</option>
+                                    <option value="Outbound">Outbound</option>
+                                </select>
                             </div>
-                        </div>  
+                        </div>
                     </div>
 
-                    {/* *********** */}
-
+                    {/* Second Column of Inputs */}
                     <div className="mainb-secondd">
                         <div className="mainb-first-search">
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Extension Number
-                                </span>
+                                <span className="input-group-text phrase-word span-w">External Number</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Extension Number"
-                                    value={spokenPhrase}
-                                    onChange={(e) => setSpokenPhrase(e.target.value)}
+                                    placeholder="Enter External Number"
+                                    value={externalNumber}
+                                    onChange={(e) => setExternalNumber(e.target.value)}
                                 />
                             </div>
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Dialed Number
-                                </span>
+                                <span className="input-group-text phrase-word span-w">Caller ID Name</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Dialed Number"
-                                    value={addPhrase}
-                                    onChange={(e) => setAddPhrase(e.target.value)}
+                                    placeholder="Enter Caller ID Name"
+                                    value={callerIdName}
+                                    onChange={(e) => setCallerIdName(e.target.value)}
                                 />
                             </div>
                             <div className="input-group input-group-sm mb-3 sed">
-                                <span className="input-group-text phrase-word span-w" id="inputGroup-sizing-sm">
-                                    Recieved Number
-                                </span>
+                                <span className="input-group-text phrase-word span-w">Call Duration (secs)</span>
                                 <input
                                     type="text"
                                     className="form-control inp-w"
-                                    aria-label="Sizing example input"
-                                    aria-describedby="inputGroup-sizing-sm"
-                                    placeholder="Enter Recieved Number"
-                                    value={spokenPhrase}
-                                    onChange={(e) => setSpokenPhrase(e.target.value)}
+                                    placeholder="Enter Call Duration"
+                                    value={callDuration}
+                                    onChange={(e) => setCallDuration(e.target.value)}
                                 />
                             </div>
-                            
-                            {/* ******* */}
-                            
+
                             <div className="srch-btns">
-                                <button 
-                                    type="button" 
-                                    className="btn btn-primary clr-srchh"
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary clr-srchh"
                                     onClick={handleClearClick}
                                 >
-                                    Search 
+                                    Clear
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary clr-srchh"
+                                    onClick={handleSearchClick}
+                                >
+                                    Search
                                 </button>
                             </div>
-                        </div> 
-
+                        </div>
                     </div>
                 </div>
             </div>

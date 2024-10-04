@@ -5,7 +5,7 @@ import './Landing.css';
 import MainBody from "../MainBody/MainBody";
 import MainBody2 from "../MainBody2/MainBody2";
 import MainFiles from "../MainFiles/MainFiles";
-import MainFiles2 from "../MainFiles2/MainFiles2"; // Import MainFiles2
+import MainFiles2 from "../MainFiles2/MainFiles2"; 
 import Header from "../Header/Header";
 import Sidebar from "../Sidebar/Sidebar";
 
@@ -60,7 +60,10 @@ const Landing = () => {
                         )}
                         
                         {selectedFilter === "Normal" && (
-                            <MainBody2 />
+                            <>
+                                <MainBody2 />
+                                <MainFiles searchQuery={searchQuery} wordGroups={wordGroups} />
+                            </>
                         )}
 
                         {selectedFilter === "AddCategory" && (

@@ -7,7 +7,7 @@
     background-color:#364C63 ;
     padding:0;
     align-items: center;
-    height: 18vh;
+    height: 24vh;
     overflow: hidden;
 }
 
@@ -28,25 +28,29 @@
     margin: 1rem;
 }
 
-.span-w{
+.span-w {
     width: 30%;
-    height: 1rem;
-    line-height: normal;
-    margin: -0.15rem;
+    height: 1.25rem;
+    line-height: 1.25rem;
+    margin: 0; /* Adjusted margin for better alignment */
 }
 
-.inp-w{
+.inp-w {
     width: 70%;
-    height: 1rem;
+    height: 1.25rem; /* Adjusted for better consistency */
     line-height: normal;
-    margin: -0.15rem;
+    margin: 0; /* Adjusted margin for consistency */
     transition: height 0.3s ease, font-size 0.3s ease;
 }
 
-.inp-w:focus {
-    height: 1.25rem;
-    font-size: 0.75em;
+
+.sle-dur {
+    height: 1rem;
+    font-size: 0.9rem;
+    line-height: 0.5rem;
+    transition: height 0.3s ease, font-size 0.3s ease; /* Smooth transition */
 }
+
 
 .mainb-secondd{
     border:none;
